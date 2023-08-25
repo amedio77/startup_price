@@ -7,7 +7,7 @@ from scrapy.exceptions import CloseSpider
 
 
 class NewsSpider(scrapy.Spider):
-    name = "price"
+    name = "report"
 
     def __init__(self, *args, **kwargs):
         super(NewsSpider, self).__init__(*args, **kwargs)
@@ -15,7 +15,7 @@ class NewsSpider(scrapy.Spider):
         self.util = Util()
 
     def start_requests(self):
-        base_url = "https://startuprecipe.co.kr/page/"
+        base_url = "https://startuprecipe.co.kr/archives/invest-report/page/"
         last_date = self.db_manager.get_last_crawled_date()
         # 페이지 1부터 10까지 URL 생성
         for page_num in range(1, 5):
@@ -27,16 +27,16 @@ class NewsSpider(scrapy.Spider):
         # response.meta를 사용하여 last_date를 가져옵니다.
         last_date = response.meta['last_date']
 
-        for article in response.css('.blog-post-masonry'):
+        for article in response.css(
+                '.vc_col-lg-12.vc_col-md-12.vc_col-sm-12.vc_col-xs-12.grid-item.masonry-block.blog-post-masonry'):
             item = {
-                'date': article.css('.tags .tag:first-child::text').get().strip(),
-                'category': article.css('.tags .tag:last-child::text').get().strip(),
                 'title': article.css('h3 a span::text').get().strip(),
                 'link': article.css('h3 a::attr(href)').get(),
+                'date': article.css('.tags .tag:first-child::text').get().strip(),
+                'category': 'report',
                 'snippet': article.css('p::text').get().strip(),
             }
             comparison_result = self.util.compare_dates( last_date, item.get('date') );
-
             if comparison_result == 0 or comparison_result == 1:
                 # 정상진행
                 self.log(f"last_date_now : {last_date} / {item.get('date')} / {comparison_result}")

@@ -98,6 +98,6 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
 DOWNLOAD_DELAY = 1
-CONCURRENT_REQUESTS = 10
+CONCURRENT_REQUESTS = 1
 
 
